@@ -149,5 +149,79 @@ namespace Unweighted_and_Undirected_Graphs
             return null;
         }
 
+        public bool IfPathExists(Vertex<T> start, Vertex<T> end)
+        {
+            Stack<Vertex<T>> search = new Stack<Vertex<T>>();
+
+            Vertices.ForEach(a => a.IsVisited = false);
+
+            search.Push(start);
+
+            Vertex<T> curr = null;
+
+            while (curr != end)
+            {
+                curr = search.Pop();
+                curr.IsVisited = true;
+
+                for (int i = 0; i < curr.Neighbors.Count; i++)
+                {
+                    if (curr.Neighbors[i].IsVisited)
+                    {
+                        search.Push(curr.Neighbors[i]);
+                    }
+                }
+
+                if (search.Count == 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool IfCycleExists()
+        {
+            bool[] cycles = new bool[Vertices.Count];
+
+            for (int i = 0; i < cycles.Length; i++)
+            {
+                Queue<Vertex<T>> search = new Queue<Vertex<T>>();
+
+                Vertices.ForEach(a => a.IsVisited = false);
+                search.Enqueue(Vertices[i]);
+
+                Vertex<T> current = null;
+
+                while (search.Count != 0)
+                {
+                    current = search.Dequeue();
+                    current.IsVisited = false;
+
+                    for (int j = 0; j < current.Neighbors.Count; j++)
+                    {
+                        if (!current.Neighbors[j].IsVisited)
+                        {
+                            search.Enqueue(current.Neighbors[j]);
+                        }
+                        else if (search.Contains(current))
+                        {
+                            cycles[i] = true;
+                            break;
+                        }
+                    }
+
+                    if (cycles[i])
+                    {
+                        break;
+                    }
+                }
+
+                return false;
+            }
+
+            return true;
+        }
     }
 }
